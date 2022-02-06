@@ -1,5 +1,6 @@
 import numpy as np
 from math import ceil
+from streaming import Stream
 
 
 class Buffer:
@@ -46,9 +47,8 @@ def collapse_operation(buffers: list[Buffer]):
     # print(y.seq, y.k, y.weight)
 
     for b in buffers:
-        b.weight, b.label, b.seq = 1, False, []
+        b.weight, b.label, b.seq = 0, False, []
     buffers[0] = y
-    return buffers
 
 
 def output_operation(buffers: list[Buffer], quantile: float):
@@ -62,5 +62,37 @@ def output_operation(buffers: list[Buffer], quantile: float):
     return bucket[position]
 
 
-def munro_paterson():
-    pass
+def munro_paterson(b: int, k: int, q: float, stream: Stream) -> int:
+    buffers = [Buffer(k, 0, False, []) for i in range(b)]
+    empty = [i for i in range(b)]
+    full = []
+    big_seq = []
+    try:
+        while True:
+
+            if len(empty) > 0:
+                seq = next(stream.stream_k_values())
+                new_operation(buffers[empty[0]], seq)
+                full.append(empty[0])
+                empty.pop(0)
+                big_seq += seq
+
+            else:
+                weights = [buffers[i].weight for i in full]
+                seen = []
+                for i, w in enumerate(weights):
+                    if w in seen:
+                        i1 = full[i]
+                        i2 = full[seen.index(w)]
+                    else:
+                        seen.append(w)
+                collapse_operation([buffers[i1], buffers[i2]])
+                empty.append(i2)
+
+    except StopIteration:
+        full_buffers = [buffers[i] for i in full]
+        big_seq.sort()
+        print(big_seq)
+        print(np.quantile(big_seq, q))
+        return output_operation(full_buffers, q)
+
