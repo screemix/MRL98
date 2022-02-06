@@ -60,3 +60,7 @@ def output_operation(buffers: list[Buffer], quantile: float):
 
     position = ceil(k*w*quantile)
     return bucket[position]
+
+
+def munro_paterson():
+    pass
