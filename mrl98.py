@@ -35,16 +35,13 @@ def collapse_operation(buffers: list[Buffer]):
     w = sum([b.weight for b in buffers])
 
     bucket = sum([b.seq*b.weight for b in buffers], [])
-    # print("bucket ", bucket)
     bucket.sort()
-    # print("sorted bucket ", bucket)
 
     offset = (w + 1) / 2 if w % 2 == 1 else w / 2
-    # print("offset: ", offset)
     new_seq = []
     for i in range(k):
-        # position = i*w + int(offset) + (w % 2 == 0) * (i % 2)*2
-        position = i * w + int(offset)
+        position = i*w + int(offset) + (not(w % 2)) * (i % 2) - 1
+        # position = i * w + int(offset)
         # print((w % 2) * (i % 2), position)
         new_seq.append(bucket[position])
 
@@ -94,7 +91,7 @@ def munro_paterson(b: int, k: int, q: float, stream: Stream) -> int:
     except StopIteration:
         full_buffers = [buffers[i] for i in full]
         big_seq.sort()
-        print(big_seq)
+        # print(big_seq)
         print(np.quantile(big_seq, q))
         return output_operation(full_buffers, q)
 
@@ -128,7 +125,6 @@ def mrl98_new(b: int, k: int, q: float, stream: Stream) -> int:
                 buf_idx_l = [i for i in range(b) if buffers[i].level==l]
                 collapse_operation([buf for buf in buffers if buf.level == l])
                 buffers[buf_idx_l[0]].level = l+1
-
 
 
     except StopIteration:
