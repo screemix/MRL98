@@ -30,21 +30,57 @@ def new_operation(b: Buffer, seq: list):
     b.weight = 1
 
 
-def collapse_operation(buffers: list[Buffer]):
-    k = buffers[0].k
+def merge_sequences(buffers: list[Buffer]) -> list:
     w = sum([b.weight for b in buffers])
+    offset = (w + 1) / 2 if w % 2 == 1 else w / 2
+    buf_num = len(buffers)
+    k = buffers[0].k
+
+    sequences = []
+    for buf in buffers:
+        seq = buf.seq.copy()
+        seq.sort()
+        sequences.append(seq)
+    counter = 0
+    result_seq = []
+    cur_ind = [0 for _ in range(buf_num)]
+
+    cur_values = [sequences[j][cur_ind[j]] for j in range(buf_num) if cur_ind[j] < k]
+    i = 0
+
+    while i < k:
+        position = i * w + int(offset) + (not (w % 2)) * (i % 2)
+        cur_values = [sequences[j][cur_ind[j]] for j in range(buf_num) if cur_ind[j] < k]
+
+        min_value = min(cur_values)
+        min_index = cur_values.index(min_value)
+        cur_ind[min_index] += 1
+        counter += buffers[min_index].weight
+        if counter >= position:
+            result_seq.append(min_value)
+            i += 1
+
+    return result_seq, w
+
+
+def collapse_operation(buffers: list[Buffer]):
+
+    k = buffers[0].k
 
     bucket = sum([b.seq*b.weight for b in buffers], [])
     bucket.sort()
 
-    offset = (w + 1) / 2 if w % 2 == 1 else w / 2
-    new_seq = []
-    for i in range(k):
-        position = i*w + int(offset) + (not(w % 2)) * (i % 2) - 1
-        # position = i * w + int(offset)
-        # print((w % 2) * (i % 2), position)
-        new_seq.append(bucket[position])
+    # previous version, require materializing of each object
+    # w = sum([b.weight for b in buffers])
+    # offset = (w + 1) / 2 if w % 2 == 1 else w / 2
+    # new_seq = []
+    # for i in range(k):
+    #     position = i*w + int(offset) + (not(w % 2)) * (i % 2) - 1
+    #     # position = i * w + int(offset)
+    #     # print((w % 2) * (i % 2), position)
+    #     new_seq.append(bucket[position])
 
+    new_seq, w = merge_sequences(buffers)
     y = Buffer(k, w, label=True, seq=new_seq)
     # print(y.seq, y.k, y.weight)
 

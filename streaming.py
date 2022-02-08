@@ -11,7 +11,7 @@ class Stream:
     def stream_k_values(self):
         while self.n > 0:
             next_values_len = self.k if (self.n // self.k > 0 or self.n == np.inf) else self.n
-            next_values = [random.randint(1, 100) for _ in range(next_values_len)]
+            next_values = [random.randint(1, 1000) for _ in range(next_values_len)]
             self.n -= next_values_len
             yield next_values
 
