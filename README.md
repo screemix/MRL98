@@ -46,12 +46,14 @@ Optimal parameters for each error level were taken from original paper where the
 The aim of paper was to optimize algorithm in terms of memory consumption, so there were no explicit remarks about execution time. Still, an experiment was performed to compare MRL98 and Munro-Paterson algorithms in term of excecution time. While error rate was fixed on 0.001, graph of execuion time over dataset size was plotted. It shows that there is no significant difference between two algorithms. Yet MRL98 is a bit faster:
 
 ![](https://i.imgur.com/vEYXW1o.png)
+
 Figure 1: execution time over dataset size, fixed error level=0.001
 
 
 Also, execution times of MRL98 algoritm alone were plotted depending on the error level. This graph vizualize the fact that execution time does not depends on error level, but on dataset size.
 
 ![](https://i.imgur.com/CRW6wZB.png)
+
 Figure 2: execution time over dataset size for different error levels of MRL98
 
 **Memory consumption**
@@ -59,6 +61,7 @@ Figure 2: execution time over dataset size for different error levels of MRL98
 As the main aim of paper was optimal streaming algorithm in terms of memory consumption, the difference between MRL98 and Munro-Paterson algorithms is an order of magnitude greater, *which is consistent with the original paper*:
 
 ![](https://i.imgur.com/i7Zwrhv.png)
+
 Figure 3: memory consumption over dataset size, fixed error level=0.001
 
 Unlike execution time, memory consumption does depend on error level guarantee. It is also consistent with the original work because value `bk` increases as error level decreases. 
@@ -94,4 +97,5 @@ Table 1: Observed error based on 1/q quantile and dataset size=N for unsorted se
 
 
 ![](https://i.imgur.com/0ANEHU1.png)
+
 Fgure 5: observed error from original study
