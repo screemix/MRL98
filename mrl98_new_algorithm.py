@@ -3,8 +3,7 @@ from operations import Buffer, new_operation, collapse_operation, output_operati
 from streaming import Stream
 import numpy as np
 from math import ceil
-import sys
-
+import s
 
 def mrl98_new(b: int, k: int, q: float, stream: Stream, test_mode=False) -> int:
     buffers = [Buffer(k, 0, False, []) for i in range(b)]
