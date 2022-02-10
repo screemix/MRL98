@@ -5,6 +5,7 @@ import numpy as np
 from math import ceil
 import sys
 
+
 def mrl98_new(b: int, k: int, q: float, stream: Stream, test_mode=False) -> int:
     buffers = [Buffer(k, 0, False, []) for i in range(b)]
     big_seq = []
