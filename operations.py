@@ -2,6 +2,13 @@ import numpy as np
 from math import ceil, floor
 from streaming import Stream
 
+def rank(a, elem: int):
+    elems = list(set(a))
+    elems.sort()
+    return elems.index(elem), len(elems)
+
+def calculate_error(real_rank: int, observed_rank: int, N: int):
+    return abs(real_rank - observed_rank) / N
 
 class Buffer:
     def __init__(self, k, w, label=False, seq=[], level=None):
@@ -30,7 +37,7 @@ def new_operation(b: Buffer, seq: list):
     b.weight = 1
 
 
-def merge_sequences(buffers: list[Buffer]) -> list:
+def merge_sequences(buffers):
     w = sum([b.weight for b in buffers])
     offset = (w + 1) / 2 if w % 2 == 1 else w / 2
     buf_num = len(buffers)
@@ -50,6 +57,7 @@ def merge_sequences(buffers: list[Buffer]) -> list:
 
     while i < k:
         position = i * w + int(offset) + (not (w % 2)) * (i % 2)
+        # position = i * w + int(offset)
         cur_values = [sequences[j][cur_ind[j]] for j in range(buf_num) if cur_ind[j] < k]
 
         min_value = min(cur_values)
@@ -63,7 +71,7 @@ def merge_sequences(buffers: list[Buffer]) -> list:
     return result_seq, w
 
 
-def collapse_operation(buffers: list[Buffer]):
+def collapse_operation(buffers):
 
     k = buffers[0].k
 
@@ -89,14 +97,14 @@ def collapse_operation(buffers: list[Buffer]):
         b.weight, b.label, b.seq = 0, False, []
 
 
-def output_operation(buffers: list[Buffer], quantile: float):
+def output_operation(buffers, quantile: float):
     w = sum([b.weight for b in buffers])
     k = buffers[0].k
 
     bucket = sum([b.seq * b.weight for b in buffers], [])
     bucket.sort()
 
-    position = ceil(k*w*quantile)
+    position = ceil(k*w*quantile) - 1
     return bucket[position]
 
 
