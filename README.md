@@ -2,7 +2,7 @@
 
 Implementation and comparison of Munro-Paterson and MRL98 (so-called "new") algorithms from paper ["Approximate Medians and other Quantiles in One Pass and with Limited Memory"](https://www2.cs.sfu.ca/CourseCentral/741/jpei/readings/MRL98.pdf)
 
-## Repository sctructure
+## Repository structure
 `operations.py`  - implementaion of `new`, `collaplse` and `output` operaions from original paper; class `Buffer`, auxilary function for merging and error calculation
 munro_paterson.py - munro-paterson algorithm implementation
 `mrl98_new_algorithm.py` - "new algorithm" from paper implementation
